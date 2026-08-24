@@ -8,3 +8,4 @@ radar.db
 *.db-journal
 output/
 .playwright-cli/
+backups/

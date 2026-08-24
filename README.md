@@ -106,3 +106,5 @@ Compose 默认只监听服务器回环地址 `127.0.0.1:8766`，需要通过反�
 - [Apple iTunes Search API](https://performance-partners.apple.com/search-api)：应用搜索和元数据。
 
 详细版本变化见 [CHANGELOG.md](./CHANGELOG.md)。
+
+当前甲骨文服务器部署状态和更新命令见 [DEPLOYMENT.md](./DEPLOYMENT.md)。
