@@ -10,7 +10,7 @@ services:
       REQUEST_CONCURRENCY: ${REQUEST_CONCURRENCY:-4}
       SEED_DEMO_APPS: ${SEED_DEMO_APPS:-true}
     ports:
-      - "${RADAR_PORT:-8000}:8000"
+      - "127.0.0.1:${RADAR_PORT:-8766}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -37,4 +37,3 @@ services:
 
 volumes:
   radar_postgres:
-

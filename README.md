@@ -48,7 +48,7 @@ Copy-Item .env.example .env
 ```dotenv
 POSTGRES_PASSWORD=替换为高强度数据库密码
 ADMIN_TOKEN=替换为高强度管理令牌
-RADAR_PORT=8000
+RADAR_PORT=8766
 REFRESH_HOUR=3
 REFRESH_MINUTE=20
 ```
@@ -61,6 +61,7 @@ docker compose ps
 ```
 
 生产环境应在服务前配置 Caddy、Nginx 或云负载均衡器提供 HTTPS。不要直接使用 Compose 文件中的默认密码。
+Compose 默认只监听服务器回环地址 `127.0.0.1:8766`，需要通过反向代理对外提供访问，避免直接暴露应用管理接口。
 
 ## 主要 API
 
@@ -105,4 +106,3 @@ docker compose ps
 - [Apple iTunes Search API](https://performance-partners.apple.com/search-api)：应用搜索和元数据。
 
 详细版本变化见 [CHANGELOG.md](./CHANGELOG.md)。
-
