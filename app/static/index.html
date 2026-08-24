@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="自托管的 App Store 全球订阅价格监测与低价区预警工具">
+  <title>App Store 全球订阅雷达</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23183e31'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='36' fill='white'%3ER%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/styles.css?v=0.1.0-2">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="返回首页">
+        <span class="brand-mark">R</span>
+        <span><strong>订阅雷达</strong><small>Storefront intelligence</small></span>
+      </a>
+
+      <form class="search" id="search-form">
+        <label for="search-input">添加监测应用</label>
+        <div class="search-box">
+          <input id="search-input" name="q" placeholder="名称、App ID 或链接" autocomplete="off">
+          <button type="submit" aria-label="搜索">⌕</button>
+        </div>
+      </form>
+      <div id="search-results" class="search-results" hidden></div>
+
+      <div class="section-heading">
+        <span>监测列表</span><span id="app-count" class="count">0</span>
+      </div>
+      <nav id="app-list" class="app-list" aria-label="监测应用"></nav>
+
+      <div class="sidebar-footer">
+        <button id="token-button" class="text-button" type="button">设置管理令牌</button>
+        <a href="/docs" target="_blank" rel="noreferrer">API 文档 ↗</a>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">APPLE SUBSCRIPTION MONITOR</p>
+          <h1>全球价格，一眼看清</h1>
+        </div>
+        <div class="live"><i></i><span>服务在线</span></div>
+      </header>
+
+      <section class="stats" aria-label="监测概况">
+        <article><span>监测应用</span><strong id="stat-apps">—</strong><small>个</small></article>
+        <article><span>订阅产品</span><strong id="stat-products">—</strong><small>个 SKU</small></article>
+        <article><span>价格记录</span><strong id="stat-prices">—</strong><small>条当前价</small></article>
+        <article><span>地区覆盖</span><strong id="stat-regions">—</strong><small>个 storefront</small></article>
+      </section>
+
+      <section id="welcome" class="welcome panel">
+        <div>
+          <p class="eyebrow">GET STARTED</p>
+          <h2>选择左侧应用，开始第一次价格采集</h2>
+          <p>已预置六个示例应用。刷新后会从 Apple storefront 拉取公开展示的 IAP，保存当前价和历史快照。</p>
+        </div>
+        <div class="flow" aria-label="工作流程">
+          <span>选择应用</span><b>→</b><span>刷新 30 区</span><b>→</b><span>比较价格</span>
+        </div>
+      </section>
+
+      <section id="detail" class="detail" hidden>
+        <div class="app-header panel">
+          <div class="app-identity">
+            <div id="detail-icon" class="detail-icon">A</div>
+            <div>
+              <div class="title-row"><h2 id="detail-name"></h2><span id="detail-status" class="status"></span></div>
+              <p id="detail-developer"></p>
+              <small id="detail-updated"></small>
+            </div>
+          </div>
+          <button id="refresh-button" class="primary-button" type="button"><span>刷新价格</span><i></i></button>
+        </div>
+
+        <div id="toolbar" class="toolbar panel">
+          <label for="product-select">订阅产品</label>
+          <select id="product-select"></select>
+          <label class="filter-label" for="price-filter">筛选</label>
+          <input id="price-filter" placeholder="地区或币种">
+        </div>
+
+        <div id="empty-product" class="empty panel" hidden>
+          <span>⌁</span>
+          <h3>还没有价格数据</h3>
+          <p>点击“刷新价格”采集 30 个重点地区。首次采集通常需要 10～30 秒。</p>
+        </div>
+
+        <section id="price-view" hidden>
+          <div class="price-summary">
+            <article class="panel accent-card"><span>当前最低</span><strong id="lowest-price">—</strong><small id="lowest-region">—</small></article>
+            <article class="panel"><span>当前最高</span><strong id="highest-price">—</strong><small id="highest-region">—</small></article>
+            <article class="panel"><span>可售地区</span><strong id="available-regions">—</strong><small>本轮已采集</small></article>
+            <article class="panel"><span>最大价差</span><strong id="price-spread">—</strong><small>相对最低价</small></article>
+          </div>
+
+          <div class="table-panel panel">
+            <div class="table-title">
+              <div><h3>地区价格排名</h3><p>按本次汇率折算人民币排序</p></div>
+              <span id="product-period" class="period"></span>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>#</th><th>地区</th><th>原币价格</th><th>人民币等值</th><th>美元等值</th><th>相比最低</th><th>采集时间</th></tr></thead>
+                <tbody id="price-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <footer>数据用于价格研究，实际价格与购买资格以 Apple App Store 结算页面为准。</footer>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/static/app.js?v=0.1.0-2" defer></script>
+</body>
+</html>

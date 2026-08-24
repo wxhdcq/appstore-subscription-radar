@@ -1,0 +1,40 @@
+services:
+  radar:
+    build: .
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://radar:${POSTGRES_PASSWORD:-change-this-password}@postgres:5432/radar
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-change-this-admin-token}
+      REFRESH_HOUR: ${REFRESH_HOUR:-3}
+      REFRESH_MINUTE: ${REFRESH_MINUTE:-20}
+      REQUEST_CONCURRENCY: ${REQUEST_CONCURRENCY:-4}
+      SEED_DEMO_APPS: ${SEED_DEMO_APPS:-true}
+    ports:
+      - "${RADAR_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: radar
+      POSTGRES_USER: radar
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-this-password}
+    volumes:
+      - radar_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U radar -d radar"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  radar_postgres:
+
