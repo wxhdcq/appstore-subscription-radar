@@ -54,6 +54,7 @@ docker compose ps
 
 ```bash
 cd /opt/appstore-subscription-radar
+umask 077
 install -d -m 700 backups
 docker compose exec -T postgres pg_dump -U radar radar | gzip > "backups/radar-$(date +%Y%m%d-%H%M%S).sql.gz"
 ```
@@ -71,4 +72,3 @@ docker compose exec -T postgres pg_dump -U radar radar | gzip > "backups/radar-$
 3. 申请并启用 HTTPS。
 4. 验证 `/`、`/api/health`、`/docs` 和静态资源。
 5. 视使用范围决定是否额外限制 `/docs` 和所有写接口的来源。
-
