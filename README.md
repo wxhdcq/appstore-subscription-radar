@@ -72,7 +72,7 @@ Compose 默认只监听服务器回环地址 `127.0.0.1:8766`，需要通过反�
 https://你的域名/appstore-radar/
 ```
 
-配置使用带结尾斜杠的 `proxy_pass http://127.0.0.1:8766/;`，由代理去掉 `/appstore-radar/` 前缀；FastAPI 的 `root_path` 负责生成正确的 OpenAPI 地址。直接访问 `/appstore-radar` 会跳转到带 `/` 的规范地址。
+配置使用不带结尾斜杠的 `proxy_pass http://127.0.0.1:8766;`，将 `/appstore-radar/` 前缀原样传给 FastAPI；`ROOT_PATH` 与之保持一致，使 OpenAPI、静态资源和数据请求共用同一公共前缀。直接访问 `/appstore-radar` 会跳转到带 `/` 的规范地址。
 
 ## 主要 API
 

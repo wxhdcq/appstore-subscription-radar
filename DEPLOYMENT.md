@@ -70,7 +70,7 @@ docker compose exec -T postgres pg_dump -U radar radar | gzip > "backups/radar-$
 https://status.omniacct.com/appstore-radar/
 ```
 
-OpenResty 使用仓库中的 `deploy/nginx-appstore-radar.conf`，将子路径前缀剥离后转发到 `http://127.0.0.1:8766/`。容器设置 `ROOT_PATH=/appstore-radar`，确保 OpenAPI、静态资源和 API 请求都保留正确的公共前缀。
+OpenResty 使用仓库中的 `deploy/nginx-appstore-radar.conf`，保留子路径前缀并转发到 `http://127.0.0.1:8766`。容器设置 `ROOT_PATH=/appstore-radar`，确保 OpenAPI、静态资源和 API 请求都使用正确的公共前缀。
 
 反向代理配置位于：
 
