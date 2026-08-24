@@ -9,6 +9,7 @@ services:
       REFRESH_MINUTE: ${REFRESH_MINUTE:-20}
       REQUEST_CONCURRENCY: ${REQUEST_CONCURRENCY:-4}
       SEED_DEMO_APPS: ${SEED_DEMO_APPS:-true}
+      ROOT_PATH: ${ROOT_PATH:-/appstore-radar}
     ports:
       - "127.0.0.1:${RADAR_PORT:-8766}:8000"
     depends_on:

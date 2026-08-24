@@ -10,6 +10,7 @@
 | 服务器架构 | ARM64 / Ubuntu 24.04 LTS |
 | 部署目录 | `/opt/appstore-subscription-radar` |
 | 应用监听 | `127.0.0.1:8766` |
+| HTTPS 子路径 | `https://status.omniacct.com/appstore-radar/` |
 | 应用容器 | `appstore-subscription-radar-radar-1` |
 | 数据库容器 | `appstore-subscription-radar-postgres-1` |
 | 持久化卷 | `appstore-subscription-radar_radar_postgres` |
@@ -61,14 +62,18 @@ docker compose exec -T postgres pg_dump -U radar radar | gzip > "backups/radar-$
 
 备份目录不在 Git 中。生产化后应增加远端加密备份和定期恢复演练。
 
-## 公网入口状态
+## 公网入口
 
-当前部署只提供 `127.0.0.1:8766` 内网入口。服务器已有 OpenResty，但尚未为本项目分配域名；`radar.omniacct.com` 当前也没有 DNS A 记录，因此没有擅自占用现有站点或开放明文公网端口。
+应用作为 `status.omniacct.com` 的第二个子项目挂载：
 
-配置公网访问时建议：
+```text
+https://status.omniacct.com/appstore-radar/
+```
 
-1. 为目标域名增加指向服务器的 DNS 记录。
-2. 在 1Panel/OpenResty 中反向代理到 `http://127.0.0.1:8766`。
-3. 申请并启用 HTTPS。
-4. 验证 `/`、`/api/health`、`/docs` 和静态资源。
-5. 视使用范围决定是否额外限制 `/docs` 和所有写接口的来源。
+OpenResty 使用仓库中的 `deploy/nginx-appstore-radar.conf`，将子路径前缀剥离后转发到 `http://127.0.0.1:8766/`。容器设置 `ROOT_PATH=/appstore-radar`，确保 OpenAPI、静态资源和 API 请求都保留正确的公共前缀。
+
+反向代理配置位于：
+
+```text
+/opt/1panel/www/sites/status.omniact.com/proxy/appstore-radar.conf
+```

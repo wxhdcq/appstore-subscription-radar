@@ -57,7 +57,13 @@ async def lifespan(_: FastAPI):
     scheduler.shutdown(wait=False)
 
 
-app = FastAPI(title="App Store 全球订阅雷达 API", version="0.1.0", lifespan=lifespan)
+settings = get_settings()
+app = FastAPI(
+    title="App Store 全球订阅雷达 API",
+    version="0.1.1",
+    root_path=settings.root_path,
+    lifespan=lifespan,
+)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 DbSession = Annotated[Session, Depends(get_db)]
 

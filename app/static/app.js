@@ -11,7 +11,8 @@ function adminHeaders() {
 }
 
 async function api(path, options = {}) {
-  const response = await fetch(path, { ...options, headers: { "Content-Type": "application/json", ...adminHeaders(), ...(options.headers || {}) } });
+  const relativePath = path.replace(/^\/+/, "");
+  const response = await fetch(relativePath, { ...options, headers: { "Content-Type": "application/json", ...adminHeaders(), ...(options.headers || {}) } });
   if (!response.ok) {
     let message = `请求失败 (${response.status})`;
     try { message = (await response.json()).detail || message; } catch (_) { /* noop */ }

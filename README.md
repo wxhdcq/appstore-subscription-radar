@@ -51,6 +51,7 @@ ADMIN_TOKEN=替换为高强度管理令牌
 RADAR_PORT=8766
 REFRESH_HOUR=3
 REFRESH_MINUTE=20
+ROOT_PATH=/appstore-radar
 ```
 
 然后启动：
@@ -62,6 +63,16 @@ docker compose ps
 
 生产环境应在服务前配置 Caddy、Nginx 或云负载均衡器提供 HTTPS。不要直接使用 Compose 文件中的默认密码。
 Compose 默认只监听服务器回环地址 `127.0.0.1:8766`，需要通过反向代理对外提供访问，避免直接暴露应用管理接口。
+
+### 挂载到域名子路径
+
+生产 Compose 默认设置 `ROOT_PATH=/appstore-radar`。将 [deploy/nginx-appstore-radar.conf](./deploy/nginx-appstore-radar.conf) 放入站点的 OpenResty/Nginx `server` 配置中，即可通过以下地址访问：
+
+```text
+https://你的域名/appstore-radar/
+```
+
+配置使用带结尾斜杠的 `proxy_pass http://127.0.0.1:8766/;`，由代理去掉 `/appstore-radar/` 前缀；FastAPI 的 `root_path` 负责生成正确的 OpenAPI 地址。直接访问 `/appstore-radar` 会跳转到带 `/` 的规范地址。
 
 ## 主要 API
 

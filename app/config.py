@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_STOREFRONTS = (
@@ -32,9 +33,16 @@ class Settings(BaseSettings):
     request_timeout_seconds: float = 20
     seed_demo_apps: bool = True
     public_base_url: str = "http://localhost:8000"
+    root_path: str = ""
+
+    @field_validator("root_path", mode="before")
+    @classmethod
+    def normalize_root_path(cls, value: str | None) -> str:
+        if not value or value == "/":
+            return ""
+        return f"/{str(value).strip('/')}"
 
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-
